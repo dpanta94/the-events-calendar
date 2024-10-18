@@ -41,7 +41,7 @@ runs:
           echo "CURRENT_VERSION=$CURRENT_RELEASE_VERSION" >> $GITHUB_OUTPUT
         fi
 
-    - name: "Process changelog for changelog.txt"
+    - name: "Process changelog for changelog.md"
       id: process_changelog
       shell: bash
       env:
@@ -51,7 +51,7 @@ runs:
         RELEASE_DATE: ${{ inputs.release-date }}
       run: |
         if ${{ env.ACTION_TYPE == 'amend-version' }}; then
-          sed -i "s/^= $CURRENT_VERSION - .* =$/= $RELEASE_VERSION - $RELEASE_DATE =/" changelog.txt
+          sed -i "s/^= $CURRENT_VERSION - .* =$/= $RELEASE_VERSION - $RELEASE_DATE =/" changelog.md
         else
           # Install this dev package globally to gather changelog entries while not including it into the release package
           composer global require automattic/jetpack-changelogger:^3.0.7
@@ -67,7 +67,7 @@ runs:
           ~/.composer/vendor/bin/changelogger write --use-version="$RELEASE_VERSION" --release-date="$RELEASE_DATE" $CHANGELOG_FLAG --no-interaction --yes
         fi
 
-        CHANGELOG=$(awk '/^= / { if (p) { exit }; p=1; next } p && NF' changelog.txt)
+        CHANGELOG=$(awk '/^= / { if (p) { exit }; p=1; next } p && NF' changelog.md)
 
         # Escape backslash, new line and ampersand characters. The order is important.
         CHANGELOG=${CHANGELOG//\\/\\\\}

@@ -73,7 +73,6 @@ jobs:
               regex=$(echo "$version" | jq -r '.regex')
 
               existing_version=$(grep -Po "$regex" "$file" | grep -Po '(\d+\.\d+\.\d+(\.\d+)?)')
-              echo "Current version: $existing_version"
 
               if [ -n "$existing_version" ]; then
                   echo "Release version: $existing_version"
@@ -90,6 +89,7 @@ jobs:
         id: format_date
         run: |
           RELEASE_DATE=$( date "+%Y-%m-%d" -d "$RELEASE_DATE" ) # Release date formatted as YYYY-MM-DD
+          echo "Release date: $RELEASE_DATE"
           echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_OUTPUT
 
       - name: Create new branch
