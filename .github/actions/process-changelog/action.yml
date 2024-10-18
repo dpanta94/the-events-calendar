@@ -74,17 +74,10 @@ runs:
         CHANGELOG=${CHANGELOG//$'\n'/\\n}
         CHANGELOG=${CHANGELOG//&/\\&}
 
+        echo "CHANGELOG: $CHANGELOG"
         echo "CHANGELOG=$CHANGELOG" >> $GITHUB_OUTPUT
 
-    - name: "Process changelog for readme.txt"
-      shell: bash
-      env:
-        ACTION_TYPE: ${{ steps.verify_action_type.outputs.ACTION_TYPE || inputs.action-type }}
-        CURRENT_VERSION: ${{ steps.verify_action_type.outputs.CURRENT_VERSION }}
-        RELEASE_VERSION: ${{ inputs.release-version }}
-        RELEASE_DATE: ${{ inputs.release-date }}
-        CHANGELOG: ${{ steps.process_changelog.outputs.CHANGELOG }}
-      run: |
+        # Process the readme.txt file as well.
         if ${{ env.ACTION_TYPE == 'amend-version' }}; then
           sed -i "s/^= $CURRENT_VERSION - .* =$/= $RELEASE_VERSION - $RELEASE_DATE =/" readme.txt
         else
