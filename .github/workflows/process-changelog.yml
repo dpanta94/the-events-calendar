@@ -63,7 +63,7 @@ jobs:
           fi
 
       - name: Figure out Version
-        id: figure-out-version
+        id: figure_out_version
         run: |
           if [ "$RELEASE_VERSION" == "figure-it-out" ]; then
             jq -c '.paths.versions[]' .puprc | while read -r version; do
@@ -78,8 +78,10 @@ jobs:
                   break
               fi
             done
+            echo "Releave version: $existing_version"
             echo "RELEASE_VERSION=$existing_version" >> $GITHUB_OUTPUT
           else
+            echo "Releave version: $RELEASE_VERSION"
             echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
           fi
 
@@ -92,7 +94,7 @@ jobs:
       - name: Create new branch
         id: versions
         run: |
-          changeBranch="task/process-changelog/${{ steps.format_date.outputs.RELEASE_DATE }}/${{ steps.figure-out-version.outputs.RELEASE_VERSION }}/${{ steps.vars.outputs.sha_short }}"
+          changeBranch="task/process-changelog/${{ steps.format_date.outputs.RELEASE_DATE }}/${{ steps.figure_out_version.outputs.RELEASE_VERSION }}/${{ steps.vars.outputs.sha_short }}"
           git checkout -b "$changeBranch"
           git push origin "$changeBranch"
 
@@ -100,7 +102,7 @@ jobs:
         id: process_changelog
         uses: ./.github/actions/process-changelog
         with:
-          release-version: ${{ steps.figure-out-version.outputs.RELEASE_VERSION }}
+          release-version: ${{ steps.figure_out_version.outputs.RELEASE_VERSION }}
           release-date: ${{ steps.format_date.outputs.RELEASE_DATE }}
           action-type: ${{ env.CHANGELOG_ACTION }}
 
@@ -110,7 +112,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: ${{ github.ref }}
-          branch: "task/process-changelog/${{ steps.format_date.outputs.RELEASE_DATE }}/${{ steps.figure-out-version.outputs.RELEASE_VERSION }}/${{ steps.vars.outputs.sha_short }}"
+          branch: "task/process-changelog/${{ steps.format_date.outputs.RELEASE_DATE }}/${{ steps.figure_out_version.outputs.RELEASE_VERSION }}/${{ steps.vars.outputs.sha_short }}"
           title: "Process changelog for ${{ github.ref }}"
           body: |
             This is an automated PR created by ${{ github.actor }}.
