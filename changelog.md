@@ -1,5 +1,10 @@
 # Changelog
 
+### [6.7.1] 2024-10-18
+
+* Feature - A feature entry.
+* Deprecated - Everything is being deprecated :O!
+
 ### [6.7.0] 2024-09-26
 
 * Version - The Events Calendar 6.7.0 is only compatible with Events Calendar Pro 7.1.0 and higher
