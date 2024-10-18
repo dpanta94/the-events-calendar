@@ -49,41 +49,4 @@ runs:
         CURRENT_VERSION: ${{ steps.verify_action_type.outputs.CURRENT_VERSION }}
         RELEASE_VERSION: ${{ inputs.release-version }}
         RELEASE_DATE: ${{ inputs.release-date }}
-      run: |
-        if ${{ env.ACTION_TYPE == 'amend-version' }}; then
-          sed -i "s/^= $CURRENT_VERSION - .* =$/= $RELEASE_VERSION - $RELEASE_DATE =/" changelog.md
-        else
-          # Install this dev package globally to gather changelog entries while not including it into the release package
-          composer global require automattic/jetpack-changelogger:^3.0.7
-
-          if ${{ env.ACTION_TYPE == 'generate' }}; then
-            CHANGELOG_FLAG=""
-            echo "Generating the changelog entries." >> $GITHUB_STEP_SUMMARY
-          else
-            CHANGELOG_FLAG="--amend"
-            echo "Amending the changelog entries." >> $GITHUB_STEP_SUMMARY
-          fi
-
-          ~/.composer/vendor/bin/changelogger write --use-version="$RELEASE_VERSION" --release-date="$RELEASE_DATE" $CHANGELOG_FLAG --no-interaction --yes
-        fi
-
-        CHANGELOG=$(awk '/^= / { if (p) { exit }; p=1; next } p && NF' changelog.md)
-
-        # Escape backslash, new line and ampersand characters. The order is important.
-        CHANGELOG=${CHANGELOG//\\/\\\\}
-        CHANGELOG=${CHANGELOG//$'\n'/\\n}
-        CHANGELOG=${CHANGELOG//&/\\&}
-
-        echo "CHANGELOG: $CHANGELOG"
-        echo "CHANGELOG=$CHANGELOG" >> $GITHUB_OUTPUT
-
-        # Process the readme.txt file as well.
-        if ${{ env.ACTION_TYPE == 'amend-version' }}; then
-          sed -i "s/^= $CURRENT_VERSION - .* =$/= $RELEASE_VERSION - $RELEASE_DATE =/" readme.txt
-        else
-          if ${{ env.ACTION_TYPE == 'amend' }}; then
-            perl -i -p0e "s/= $RELEASE_VERSION.*?(\n){2}//s" readme.txt # Delete the existing changelog for the release version first
-          fi
-
-          sed -ri "s|(== Changelog ==)|\1\n\n= $RELEASE_VERSION - $RELEASE_DATE =\n$CHANGELOG|" readme.txt
-        fi
+      run: ./bin/process-changelog.sh $RELEASE_VERSION $CURRENT_VERSION $ACTION_TYPE $RELEASE_DATE
