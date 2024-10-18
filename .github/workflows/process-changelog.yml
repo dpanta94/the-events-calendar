@@ -41,6 +41,14 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
+      - name: Configure PHP environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+
+      - name: Set up Composer
+        run: composer install
+
       - name: Set Variables
         id: vars
         run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
