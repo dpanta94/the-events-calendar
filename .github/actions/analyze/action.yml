@@ -94,7 +94,7 @@ runs:
             # Extract the file names, format them, and remove the leading 'a/'.
             formatted_files=$(echo "$items" | awk '{print $3}' | sed 's|^a/||' | sed 's|^|`|' | sed 's|$|`|' | paste -sd ' ' | sed 's|` |`, |g')
 
-            ./vendor/bin/changelogger add --filename-auto-suffix --significance=minor --type=tweak --entry="Changed views: $formatted_files"
+            ./vendor/bin/changelogger add --filename=analyze --filename-auto-suffix --significance=minor --type=tweak --entry="Changed views: $formatted_files"
           else
             if [[ "$key" =~ actions ]]; then
               # Process actions
@@ -107,9 +107,9 @@ runs:
             if [ -n "$formatted_items" ]; then
               key_short=$(echo "$key" | cut -c 1-7)
               if [[ "$key" =~ \+ ]]; then
-                ./vendor/bin/changelogger add --filename-auto-suffix --significance=minor --type=tweak --entry="Added $key_short: $formatted_items"
+                ./vendor/bin/changelogger add --filename=analyze --filename-auto-suffix --significance=minor --type=tweak --entry="Added $key_short: $formatted_items"
               else
-                ./vendor/bin/changelogger add --filename-auto-suffix --significance=minor --type=tweak --entry="Removed $key_short: $formatted_items"
+                ./vendor/bin/changelogger add --filename=analyze --filename-auto-suffix --significance=minor --type=tweak --entry="Removed $key_short: $formatted_items"
               fi
             fi
           fi
