@@ -41,7 +41,6 @@ jobs:
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
-          # fetch-tags: true
 
       - name: Configure PHP environment
         uses: shivammathur/setup-php@v2
